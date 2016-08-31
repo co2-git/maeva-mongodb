@@ -4,13 +4,15 @@ import connect from '../lib/connect';
 import insert from '../lib/insert';
 import find from '../lib/find';
 
-describe.only('Find', () => {
+const collection = `test-find-${Math.random()}-${Date.now()}`;
+
+describe('Find', () => {
   let conn;
   before(async () => {
     conn = new EventEmitter();
     await connect(process.env.MONGODB_URL)(conn);
     await insert(conn, {
-     collection: 'test-find',
+     collection,
      documents: [{foo: 1}, {foo: 2}],
    });
   });
@@ -20,18 +22,28 @@ describe.only('Find', () => {
     });
   });
   describe('Find', () => {
-    describe('Find many', () => {
-      describe('Empty query', () => {
-        let results;
-        before(async () => {
-          results = await find(conn, {
-            collection: 'test-find',
-            documents: {}
-          });
+    describe('Empty query', () => {
+      let results;
+      before(async () => {
+        results = await find(conn, {
+          collection,
+          query: {}
         });
-        it('should be an object', () => {
-          should(results).be.an.Object();
+      });
+      it('should be an array of 2', () => {
+        should(results).be.an.Array().and.have.length(2);
+      });
+    });
+    describe('With query', () => {
+      let results;
+      before(async () => {
+        results = await find(conn, {
+          collection,
+          query: {foo: 1}
         });
+      });
+      it('should be an array of 1', () => {
+        should(results).be.an.Array().and.have.length(1);
       });
     });
   });

@@ -15,7 +15,6 @@ export default function find(conn, finder) {
         }
       }
       const results = await query.toArray();
-      console.log({results});
       resolve(results);
     } catch (error) {
       console.log(error.stack);
