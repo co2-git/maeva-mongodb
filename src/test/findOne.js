@@ -6,7 +6,7 @@ import findOne from '../lib/findOne';
 
 const collection = `test-findOne-${Math.random()}-${Date.now()}`;
 
-describe.only('Find One', () => {
+describe('Find One', () => {
   let conn;
   before(async () => {
     conn = new EventEmitter();

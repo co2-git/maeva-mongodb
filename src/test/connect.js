@@ -2,7 +2,7 @@
 import 'babel-polyfill';
 import should from 'should';
 import {EventEmitter} from 'events';
-import {Db} from 'mongodb';
+import {Db, ObjectID} from 'mongodb';
 import connect from '../lib/connect';
 
 describe('Connect', () => {
@@ -25,6 +25,11 @@ describe('Connect', () => {
     });
     it('should have a disconnector', () => {
       should(conn.disconnectDriver).be.a.Function();
+    });
+    it('should have an id descriptor', () => {
+      should(conn.id).be.an.Object();
+      should(conn.id).have.property('name').which.eql('_id');
+      should(conn.id).have.property('type').which.eql(ObjectID);
     });
     describe('Operations', () => {
       it('should have operations', () => {
