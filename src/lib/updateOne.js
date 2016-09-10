@@ -1,8 +1,8 @@
-export default function update(conn, updater) {
+export default function updateOne(conn, updater) {
   return new Promise(async (resolve, reject) => {
     try {
       const collection = conn.db.collection(updater.collection);
-      const result = await collection.updateMany(
+      const result = await collection.updateOne(
         updater.get,
         {$set: updater.set},
         updater.options,

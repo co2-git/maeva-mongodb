@@ -1,8 +1,12 @@
-import mongodb, {Db, MongoClient, ObjectID} from 'mongodb';
+import mongodb, {Db, MongoClient} from 'mongodb';
+import ObjectId from './types/ObjectId';
 import insert from './insert';
 import find from './find';
 import findOne from './findOne';
+import findById from './findById';
 import update from './update';
+import updateOne from './updateOne';
+import updateById from './updateById';
 
 const maevaConnectMongoDB = (url) => (conn) => new Promise(
   async (resolve, reject) => {
@@ -12,7 +16,10 @@ const maevaConnectMongoDB = (url) => (conn) => new Promise(
         insert: (inserter) => insert(conn, inserter),
         find: (finder, options) => find(conn, finder, options),
         findOne: (finder, options) => findOne(conn, finder, options),
-        update: (updater) => findOne(conn, updater),
+        findById: (finder, options) => findById(conn, finder, options),
+        update: (updater) => update(conn, updater),
+        updateOne: (updater) => updateOne(conn, updater),
+        updateById: (updater) => updateById(conn, updater),
       };
       conn.disconnectDriver = () => new Promise(async (resolve) => {
         await conn.db.close();
@@ -20,7 +27,10 @@ const maevaConnectMongoDB = (url) => (conn) => new Promise(
       });
       conn.id = {
         name: '_id',
-        type: ObjectID,
+        type: ObjectId,
+      };
+      conn.schema = {
+        _id: ObjectId,
       };
       resolve();
     } catch (error) {
