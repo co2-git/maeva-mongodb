@@ -2,8 +2,9 @@
 import 'babel-polyfill';
 import should from 'should';
 import {EventEmitter} from 'events';
-import {Db, ObjectID} from 'mongodb';
+import {Db} from 'mongodb';
 import connect from '../lib/connect';
+import ObjectId from '../lib/types/ObjectId';
 
 describe('Connect', () => {
   describe('Unit', () => {
@@ -29,7 +30,7 @@ describe('Connect', () => {
     it('should have an id descriptor', () => {
       should(conn.id).be.an.Object();
       should(conn.id).have.property('name').which.eql('_id');
-      should(conn.id).have.property('type').which.eql(ObjectID);
+      should(conn.id).have.property('type').which.eql(ObjectId);
     });
     describe('Operations', () => {
       it('should have operations', () => {

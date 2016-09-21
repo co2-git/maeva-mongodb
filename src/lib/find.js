@@ -1,8 +1,10 @@
+import FindStatement from './FindStatement';
+
 export default function find(conn, finder) {
   return new Promise(async (resolve, reject) => {
     try {
       const collection = conn.db.collection(finder.collection);
-      const query = collection.find(finder.query);
+      const query = collection.find(new FindStatement(finder.query));
       if (finder.options) {
         if (('limit' in finder.options)) {
           query.limit(finder.options.limit);

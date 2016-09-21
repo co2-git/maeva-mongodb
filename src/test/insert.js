@@ -2,6 +2,16 @@ import should from 'should';
 import {EventEmitter} from 'events';
 import connect from '../lib/connect';
 import insert from '../lib/insert';
+import {Model} from 'maeva';
+import {ObjectId} from 'mongodb';
+
+class Foo extends Model {
+  static schema = {foo: String};
+  constructor(object) {
+    super();
+    Object.assign(this, object);
+  }
+}
 
 describe('Insert', () => {
   describe('Unit', () => {
@@ -44,6 +54,22 @@ describe('Insert', () => {
       it('should have the expected fields', () => {
         should(results[0]).have.property('foo').which.eql(2);
         should(results[1]).have.property('foo').which.eql(3);
+      });
+    });
+    describe('Insert model', () => {
+      let results;
+      before(async () => {
+        results = await insert(conn, {
+          collection: 'test-insert',
+          documents: {foo: new Foo({foo: 'bar', _id: ObjectId()})},
+        });
+      });
+      it('should be an object', () => {
+        should(results).be.an.Object().and.not.be.an.Array();
+      });
+      it('should have put _id for model', () => {
+        should(results).have.property('foo')
+          .which.is.an.instanceof(ObjectId);
       });
     });
   });

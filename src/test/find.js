@@ -5,6 +5,14 @@ import insert from '../lib/insert';
 import find from '../lib/find';
 
 const collection = `test-find-${Math.random()}-${Date.now()}`;
+const documents = [
+  {foo: 1},
+  {foo: 2},
+  {foo: 3},
+  {foo: 4},
+  {foo: 5},
+  {foo: 6},
+];
 
 describe('Find', () => {
   let conn;
@@ -13,7 +21,7 @@ describe('Find', () => {
     await connect(process.env.MONGODB_URL)(conn);
     await insert(conn, {
      collection,
-     documents: [{foo: 1}, {foo: 2}],
+     documents,
    });
   });
   describe('Unit', () => {
@@ -30,8 +38,8 @@ describe('Find', () => {
           query: {}
         });
       });
-      it('should be an array of 2', () => {
-        should(results).be.an.Array().and.have.length(2);
+      it(`should be an array of ${documents.length}`, () => {
+        should(results).be.an.Array().and.have.length(documents.length);
       });
     });
     describe('With query', () => {
@@ -44,6 +52,20 @@ describe('Find', () => {
       });
       it('should be an array of 1', () => {
         should(results).be.an.Array().and.have.length(1);
+      });
+    });
+    describe('Not', () => {
+      describe('Field is not value', () => {
+        let results;
+        before(async () => {
+          results = await find(conn, {
+            collection,
+            query: {foo: {$not: 1}}
+          });
+        });
+        it(`should be an array of ${documents.length - 1}`, () => {
+          should(results).be.an.Array().and.have.length(documents.length - 1);
+        });
       });
     });
   });

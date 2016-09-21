@@ -4,7 +4,7 @@
   "description": "",
   "main": "dist/lib/connect.js",
   "scripts": {
-    "test": "mocha dist/test",
+    "test": "mocha --require ./dist/test-utils/mocks.js dist/test",
     "babel": "babel --out-dir dist/ src/",
     "babel:watch": "babel --watch --out-dir dist/ src/"
   },
@@ -16,6 +16,7 @@
     "babel-preset-stage-0": "^6.5.0",
     "chai": "^3.5.0",
     "mocha": "^3.0.2",
+    "mockery": "^1.7.0",
     "should": "^11.1.0"
   },
   "dependencies": {

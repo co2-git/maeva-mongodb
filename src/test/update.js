@@ -30,8 +30,8 @@ describe('Update', () => {
       before(async () => {
         results = await update(conn, {
           collection,
-          query: {foo: 1},
-          modifier: {foo: 3},
+          get: {foo: 1},
+          set: {foo: 3},
         });
       });
       it('should have modified 1', () => {
