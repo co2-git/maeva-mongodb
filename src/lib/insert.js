@@ -1,4 +1,3 @@
-import {Model} from 'maeva';
 import {ObjectId} from 'mongodb';
 
 export default function insert(conn, inserter) {
@@ -7,30 +6,9 @@ export default function insert(conn, inserter) {
       const collection = conn.db.collection(inserter.collection);
       let result;
       if (Array.isArray(inserter.documents)) {
-        result = await collection.insertMany(
-          inserter.documents.map(doc => {
-            const _doc = {};
-            for (const field in doc) {
-              if (doc[field] instanceof Model && doc[field]._id) {
-                _doc[field] = ObjectId(doc[field]._id);
-              } else {
-                _doc[field] = doc[field];
-              }
-            }
-            return _doc;
-          })
-        );
+        result = await collection.insertMany(inserter.documents);
       } else {
-        const doc = inserter.documents;
-        const _doc = {};
-        for (const field in doc) {
-          if (doc[field] instanceof Model && doc[field]._id) {
-            _doc[field] = ObjectId(doc[field]._id);
-          } else {
-            _doc[field] = doc[field];
-          }
-        }
-        result = await collection.insertOne(_doc);
+        result = await collection.insertOne(inserter.documents);
       }
       if (!result.result.ok) {
         reject(new Error('Could not insert'));

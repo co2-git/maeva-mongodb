@@ -4,6 +4,12 @@ export default function find(conn, finder) {
   return new Promise(async (resolve, reject) => {
     try {
       const collection = conn.db.collection(finder.collection);
+      console.log(require('util').inspect({
+        find: {
+          raw: finder.query,
+          statement: new FindStatement(finder.query),
+        },
+      }, { depth: null }));
       const query = collection.find(new FindStatement(finder.query));
       if (finder.options) {
         if (('limit' in finder.options)) {
@@ -17,7 +23,18 @@ export default function find(conn, finder) {
         }
       }
       const results = await query.toArray();
-      resolve(results);
+      if (finder.options.populate) {
+        const populatable = finder.model.getPopulatableFields();
+        console.log({populatable});
+        const _results = Promise.all(
+          results.map(result => Promise.all(
+            populatable.map(model => model.findById(result[model.field]))
+          ))
+        );
+        resolve(_results);
+      } else {
+        resolve(results);
+      }
     } catch (error) {
       console.log(error.stack);
       reject(error);
