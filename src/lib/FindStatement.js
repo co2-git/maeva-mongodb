@@ -17,7 +17,7 @@ export default class FindStatement {
         case 'object':
           if (query[field] === null) {
             Object.assign(this, {[field]: query[field]});
-          } else if (query[field].$_maevaFieldSchema.type.isMaevaModel) {
+          } else if (query.$$structure[field].type.isMaevaModel) {
             if (query[field]._id) {
               Object.assign(this, {[field]: query[field]._id});
             } else {
