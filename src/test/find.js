@@ -1,5 +1,6 @@
 import should from 'should';
-import {EventEmitter} from 'events';
+import EventEmitter from 'events';
+import {Schema, Util} from 'maeva';
 import connect from '../lib/connect';
 import insert from '../lib/insert';
 import find from '../lib/find';
@@ -14,7 +15,7 @@ const documents = [
   {foo: 6},
 ];
 
-describe('Find', () => {
+describe('Find operation', () => {
   let conn;
   before(async () => {
     conn = new EventEmitter();
@@ -35,7 +36,8 @@ describe('Find', () => {
       before(async () => {
         results = await find(conn, {
           collection,
-          query: {}
+          query: Util.makeStatement({}),
+          options: {},
         });
       });
       it(`should be an array of ${documents.length}`, () => {
@@ -47,7 +49,8 @@ describe('Find', () => {
       before(async () => {
         results = await find(conn, {
           collection,
-          query: {foo: 1}
+          query: Util.makeStatement({foo: 1}),
+          options: {},
         });
       });
       it('should be an array of 1', () => {
@@ -55,13 +58,22 @@ describe('Find', () => {
       });
     });
     describe('Not', () => {
-      describe('Field is not value', () => {
+      describe.only('Field is not value', () => {
         let results;
         before(async () => {
-          results = await find(conn, {
-            collection,
-            query: {foo: {$not: 1}}
-          });
+          try {
+            const query = await Util.makeStatement(
+              {foo: {$not: 1}},
+              new Schema({foo: Number}),
+            );
+            console.log({query});
+            results = await find(conn, {
+              collection,
+              query,
+            });
+          } catch (error) {
+            console.log(error.stack);
+          }
         });
         it(`should be an array of ${documents.length - 1}`, () => {
           should(results).be.an.Array().and.have.length(documents.length - 1);

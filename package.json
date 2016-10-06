@@ -1,10 +1,10 @@
 {
   "name": "maeva-mongodb",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "",
   "main": "dist/lib/connect.js",
   "scripts": {
-    "test": "mocha --require ./dist/test-utils/mocks.js dist/test",
+    "test": "mocha dist/test",
     "babel": "babel --out-dir dist/ src/",
     "babel:watch": "babel --watch --out-dir dist/ src/"
   },

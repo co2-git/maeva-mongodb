@@ -1,4 +1,5 @@
 import should from 'should';
+import {Model} from 'maeva';
 import {EventEmitter} from 'events';
 import connect from '../lib/connect';
 import insert from '../lib/insert';

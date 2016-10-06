@@ -1,5 +1,6 @@
 export default class FindStatement {
   constructor(query = {}) {
+    console.log(require('util').inspect({query}, { depth: null }));
     for (const field in query) {
       if (field === '$not') {
         if (Array.isArray(query.$not)) {
