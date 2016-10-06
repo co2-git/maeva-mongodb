@@ -1,3 +1,5 @@
+import FindStatement from './FindStatement';
+
 export default function findOne(conn, finder) {
   return new Promise(async (resolve, reject) => {
     try {
