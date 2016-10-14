@@ -19,7 +19,6 @@ export default function find(conn, finder) {
       const results = await query.toArray();
       if (finder.options && finder.options.populate) {
         const populatable = finder.model.getPopulatableFields();
-        console.log({populatable});
         const _results = Promise.all(
           results.map(result => Promise.all(
             populatable.map(model => model.findById(result[model.field]))

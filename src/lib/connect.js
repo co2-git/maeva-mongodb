@@ -1,6 +1,7 @@
 import mongodb, {Db, MongoClient} from 'mongodb';
 import ObjectId from './types/ObjectId';
 import insert from './insert';
+import count from './count';
 import find from './find';
 import findOne from './findOne';
 import findById from './findById';
@@ -15,6 +16,7 @@ const maevaConnectMongoDB = (url) => (conn) => new Promise(
       conn.db = await MongoClient.connect(url);
       conn.operations = {
         insert: (inserter) => insert(conn, inserter),
+        count: (finder, options) => count(conn, finder, options),
         find: (finder, options) => find(conn, finder, options),
         findOne: (finder, options) => findOne(conn, finder, options),
         findById: (finder, options) => findById(conn, finder, options),
