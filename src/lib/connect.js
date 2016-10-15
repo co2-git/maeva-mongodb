@@ -1,4 +1,4 @@
-import mongodb, {Db, MongoClient} from 'mongodb';
+import {MongoClient} from 'mongodb';
 import ObjectId from './types/ObjectId';
 import insert from './insert';
 import count from './count';
@@ -25,10 +25,7 @@ const maevaConnectMongoDB = (url) => (conn) => new Promise(
         updateById: (updater) => updateById(conn, updater),
         remove: (remover) => remove(conn, remover),
       };
-      conn.disconnectDriver = () => new Promise(async (resolve) => {
-        await conn.db.close();
-        resolve();
-      });
+      conn.disconnectDriver = ::conn.db.close;
       conn.id = {
         name: '_id',
         type: ObjectId,

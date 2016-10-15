@@ -1,12 +1,15 @@
+// @flow
+
+import _ from 'lodash';
+
 export default class FindStatement {
   constructor(query = {}) {
-    console.log(require('util').inspect({query}, { depth: null }));
     for (const field in query) {
-      if (field === '$not') {
-        if (Array.isArray(query.$not)) {
+      if (_.includes(['$not', '$or'], field)) {
+        if (Array.isArray(query[field])) {
           Object.assign(this, {[field]: query[field]});
         } else {
-          Object.assign(this, {$not: query.$not});
+          Object.assign(this, {[field]: query[field]});
         }
       } else {
         switch (typeof query[field]) {
@@ -18,7 +21,7 @@ export default class FindStatement {
         case 'object':
           if (query[field] === null) {
             Object.assign(this, {[field]: query[field]});
-          } else if (query.$$structure[field].type.isMaevaModel) {
+          } else if (query.$$structure && query.$$structure[field].type.isMaevaModel) {
             if (query[field]._id) {
               Object.assign(this, {[field]: query[field]._id});
             } else {
@@ -33,10 +36,17 @@ export default class FindStatement {
     }
   }
   parse(query = {}) {
+    const parsed = {};
     for (const field in query) {
       if (field === '$not') {
-        return {$ne: query.$not};
+        parsed.$ne = query.$not;
+      } else if (field === '$between') {
+        parsed.$lte = query.$between[0];
+        parsed.$gte = query.$between[1];
+      } else {
+        parsed[field] = query[field];
       }
     }
+    return parsed;
   }
 }

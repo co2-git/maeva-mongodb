@@ -1,11 +1,12 @@
 /* global describe it before after */
 import should from 'should';
-import EventEmitter from 'events';
+import maeva, {Model} from 'maeva';
 import connect from '../lib/connect';
-import insert from '../lib/insert';
-import count from '../lib/count';
 
-const collection = `test-find-${Math.random()}-${Date.now()}`;
+class CountFoo extends Model {
+  static schema = {foo: Number};
+}
+
 const documents = [
   {foo: 1},
   {foo: 2},
@@ -15,29 +16,15 @@ const documents = [
   {foo: 6},
 ];
 
-describe('Count', () => {
-  let conn;
+describe('Count (model)', () => {
   before(async () => {
-    conn = new EventEmitter();
-    await connect(process.env.MONGODB_URL)(conn);
-    await insert(conn, {
-      collection,
-      documents,
-    });
-  });
-  describe('Unit', () => {
-    it('should be a function', () => {
-      should(count).be.a.Function();
-    });
+    await maeva.connect(connect(process.env.MONGODB_URL));
+    await CountFoo.insert(documents);
   });
   describe('Count without query', () => {
     let results;
     before(async () => {
-      results = await count(conn, {
-        collection,
-        get: {},
-        options: {},
-      });
+      results = await CountFoo.count();
     });
     it('should be the right number', () => {
       should(results).eql(documents.length);
@@ -46,11 +33,7 @@ describe('Count', () => {
   describe('Count with query', () => {
     let results;
     before(async () => {
-      results = await count(conn, {
-        collection,
-        get: {foo: 1},
-        options: {},
-      });
+      results = await CountFoo.count({foo: 1});
     });
     it('should be the right number', () => {
       should(results).eql(1);
@@ -59,17 +42,13 @@ describe('Count', () => {
   describe('Count with meta-query', () => {
     let results;
     before(async () => {
-      results = await count(conn, {
-        collection,
-        get: {foo: {$gt: 4}},
-        options: {},
-      });
+      results = await CountFoo.count({foo: {$gt: 4}});
     });
     it('should be the right number', () => {
       should(results).eql(2);
     });
   });
   after(async () => {
-    // ...
+    await CountFoo.remove();
   });
 });

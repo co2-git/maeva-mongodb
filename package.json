@@ -1,6 +1,6 @@
 {
   "name": "maeva-mongodb",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "",
   "main": "dist/lib/connect.js",
   "scripts": {

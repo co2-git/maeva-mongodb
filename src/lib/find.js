@@ -4,19 +4,19 @@ export default function find(conn, finder) {
   return new Promise(async (resolve, reject) => {
     try {
       const collection = conn.db.collection(finder.collection);
-      const query = collection.find(new FindStatement(finder.query));
+      const cursor = await collection.find(new FindStatement(finder.get));
       if (finder.options) {
         if (('limit' in finder.options)) {
-          query.limit(finder.options.limit);
+          cursor.limit(finder.options.limit);
         }
         if (('skip' in finder.options)) {
-          query.skip(finder.options.skip);
+          cursor.skip(finder.options.skip);
         }
         if (('sort' in finder.options)) {
-          query.sort(finder.options.sort);
+          cursor.sort(finder.options.sort);
         }
       }
-      const results = await query.toArray();
+      const results = await cursor.toArray();
       if (finder.options && finder.options.populate) {
         const populatable = finder.model.getPopulatableFields();
         const _results = Promise.all(

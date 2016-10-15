@@ -1,11 +1,14 @@
+/* global describe it before after */
+
 import should from 'should';
 import EventEmitter from 'events';
-import {Schema, Util} from 'maeva';
 import connect from '../lib/connect';
 import insert from '../lib/insert';
 import find from '../lib/find';
+import remove from '../lib/remove';
 
-const collection = `test-find-${Math.random()}-${Date.now()}`;
+// const collection = `test-find-${Math.random()}-${Date.now()}`;
+const collection = 'test-find';
 const documents = [
   {foo: 1},
   {foo: 2},
@@ -21,9 +24,9 @@ describe('Find operation', () => {
     conn = new EventEmitter();
     await connect(process.env.MONGODB_URL)(conn);
     await insert(conn, {
-     collection,
-     documents,
-   });
+      collection,
+      documents,
+    });
   });
   describe('Unit', () => {
     it('should be a function', () => {
@@ -36,7 +39,7 @@ describe('Find operation', () => {
       before(async () => {
         results = await find(conn, {
           collection,
-          query: Util.makeStatement({}),
+          get: {},
           options: {},
         });
       });
@@ -49,7 +52,7 @@ describe('Find operation', () => {
       before(async () => {
         results = await find(conn, {
           collection,
-          query: Util.makeStatement({foo: 1}),
+          get: {foo: 1},
           options: {},
         });
       });
@@ -58,18 +61,14 @@ describe('Find operation', () => {
       });
     });
     describe('Not', () => {
-      describe.only('Field is not value', () => {
+      describe('Field is not value', () => {
         let results;
         before(async () => {
           try {
-            const query = await Util.makeStatement(
-              {foo: {$not: 1}},
-              new Schema({foo: Number}),
-            );
-            console.log({query});
+            const get = {foo: {$ne: 1}};
             results = await find(conn, {
               collection,
-              query,
+              get,
             });
           } catch (error) {
             console.log(error.stack);
@@ -80,10 +79,11 @@ describe('Find operation', () => {
         });
       });
     });
-    describe('Populate', () => {
-      describe('label', () => {
-        // ...
-      });
+  });
+  after(async () => {
+    await remove(conn, {
+      collection,
+      get: {},
     });
   });
 });
