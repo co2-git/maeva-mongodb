@@ -13,7 +13,6 @@ import remove from './remove';
 const maevaConnectMongoDB = (url) => (conn) => new Promise(
   async (resolve, reject) => {
     try {
-      console.log({url});
       conn.db = await MongoClient.connect(url);
       conn.operations = {
         insert: (inserter) => insert(conn, inserter),
