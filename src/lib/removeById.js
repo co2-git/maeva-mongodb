@@ -2,12 +2,14 @@
  *  @module removeById
 **/
 
+import {ObjectID} from 'mongodb';
+
 export default function removeById(conn, remover) {
   return new Promise(async (resolve, reject) => {
     try {
       const collection = conn.db.collection(remover.collection);
       const result = await collection.remove(
-        {_id: remover.id},
+        {_id: new ObjectID(remover.id)},
         remover.options,
       );
       if (!result.result.ok) {
