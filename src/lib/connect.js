@@ -9,6 +9,7 @@ import update from './update';
 import updateOne from './updateOne';
 import updateById from './updateById';
 import remove from './remove';
+import removeById from './removeById';
 
 const maevaConnectMongoDB = (url) => (conn) => new Promise(
   async (resolve, reject) => {
@@ -24,6 +25,7 @@ const maevaConnectMongoDB = (url) => (conn) => new Promise(
         updateOne: (updater) => updateOne(conn, updater),
         updateById: (updater) => updateById(conn, updater),
         remove: (remover) => remove(conn, remover),
+        removeById: (remover) => removeById(conn, remover),
       };
       conn.disconnectDriver = ::conn.db.close;
       conn._id = {
