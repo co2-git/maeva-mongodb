@@ -1,9 +1,13 @@
-export default function remove(conn, remover) {
+/**
+ *  @module removeById
+**/
+
+export default function removeById(conn, remover) {
   return new Promise(async (resolve, reject) => {
     try {
       const collection = conn.db.collection(remover.collection);
       const result = await collection.remove(
-        remover.get,
+        {_id: remover.id},
         remover.options,
       );
       if (!result.result.ok) {
