@@ -5,14 +5,14 @@ export default function insert(conn, inserter) {
     try {
       const collection = conn.db.collection(inserter.collection);
       let result;
-      if (Array.isArray(inserter.documents)) {
-        result = await collection.insertMany(inserter.documents);
+      if (Array.isArray(inserter.set)) {
+        result = await collection.insertMany(inserter.set);
       } else {
-        result = await collection.insertOne(inserter.documents);
+        result = await collection.insertOne(inserter.set);
       }
       if (!result.result.ok) {
         reject(new Error('Could not insert'));
-      } else if (Array.isArray(inserter.documents)) {
+      } else if (Array.isArray(inserter.set)) {
         resolve(result.ops);
       } else {
         resolve(result.ops[0]);

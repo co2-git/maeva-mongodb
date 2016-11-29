@@ -24,9 +24,10 @@ export default function find(conn, finder) {
             populatable.map(model => model.findById(result[model.field]))
           ))
         );
-        resolve(_results);
+        resolve({results: _results});
       } else {
-        resolve(results);
+        console.log({results});
+        resolve({results});
       }
     } catch (error) {
       console.log(error.stack);
