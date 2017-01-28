@@ -1,44 +1,43 @@
+/* global describe it before after */
 import should from 'should';
-import {EventEmitter} from 'events';
+import maeva, {Model} from 'maeva';
 import connect from '../lib/connect';
-import insert from '../lib/insert';
-import update from '../lib/update';
 
-const collection = `test-update-${Math.random()}-${Date.now()}`;
+class UpdateFoo extends Model {
+  static schema = {foo: Number, id: Number};
+}
+
+const documents = [
+  {id: 1, foo: 1},
+  {id: 2, foo: 2},
+  {id: 3, foo: 3},
+  {id: 4, foo: 4},
+  {id: 5, foo: 5},
+  {id: 6, foo: 6},
+];
 
 describe('Update', () => {
-  let conn;
   before(async () => {
-    conn = new EventEmitter();
-    await connect(process.env.MONGODB_URL)(conn);
-    await insert(conn, {
-     collection,
-     documents: [
-       {foo: 1, boo: true},
-       {foo: 2, boo: true},
-     ],
-   });
+    await maeva.connect(connect(process.env.MONGODB_URL));
+    await UpdateFoo.insert(documents);
   });
-  describe('Unit', () => {
-    it('should be a function', () => {
-      should(update).be.a.Function();
+  describe('Update all', () => {
+    let results, found;
+    before(async () => {
+      results = await UpdateFoo.update({id: 1}, {foo: 2});
+      found = await UpdateFoo.findOne({id: 1});
+    });
+    it('should be an array', () => {
+      should(results).be.an.Array().and.have.length(1);
+    });
+    it('should have the expected fields', () => {
+      should(results[0]).have.property('id').which.eql(1);
+      should(results[0]).have.property('foo').which.eql(2);
+      should(found).have.property('id').which.eql(1);
+      should(found).have.property('foo').which.eql(2);
     });
   });
-  describe('Update', () => {
-    describe('Update with query', () => {
-      let results;
-      before(async () => {
-        results = await update(conn, {
-          collection,
-          get: {foo: 1},
-          set: {foo: 3},
-        });
-      });
-      it('should have modified 1', () => {
-        should(results).be.an.Object()
-          .and.have.property('modifiedCount')
-          .which.eql(1);
-      });
-    });
+  after(async () => {
+    await UpdateFoo.remove();
   });
 });

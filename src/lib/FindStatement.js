@@ -1,36 +1,42 @@
 // @flow
-
-import _ from 'lodash';
+import includes from 'lodash/includes';
+import _switch from 'underscore-switch';
 
 export default class FindStatement {
   constructor(query = {}) {
-    for (const field in query) {
-      if (_.includes(['$not', '$or'], field)) {
-        if (Array.isArray(query[field])) {
+    if (typeof query === 'function') {
+
+    } else if (typeof query === 'object') {
+      for (const field in query) {
+        if (includes(['$not', '$or'], field)) {
           Object.assign(this, {[field]: query[field]});
         } else {
-          Object.assign(this, {[field]: query[field]});
-        }
-      } else {
-        switch (typeof query[field]) {
-        case 'number':
-        case 'string':
-        case 'boolean':
-          Object.assign(this, {[field]: query[field]});
-          break;
-        case 'object':
-          if (query[field] === null) {
-            Object.assign(this, {[field]: query[field]});
-          } else if (query.$$structure && query.$$structure[field].type.isMaevaModel) {
-            if (query[field]._id) {
-              Object.assign(this, {[field]: query[field]._id});
-            } else {
-              Object.assign(this, {[field]: query[field]});
-            }
-          } else {
-            Object.assign(this, {[field]: this.parse(query[field])});
-          }
-          break;
+          _switch(typeof query[field], [
+            {
+              case: ['number', 'string', 'boolean'],
+              then: () => {
+                Object.assign(this, {[field]: query[field]});
+              },
+            },
+            {
+              case: 'object',
+              then: () => {
+                if (query[field] === null) {
+                  Object.assign(this, {[field]: query[field]});
+                } else if (
+                  query.$$structure && query.$$structure[field].type.isMaevaModel
+                ) {
+                  if (query[field]._id) {
+                    Object.assign(this, {[field]: query[field]._id});
+                  } else {
+                    Object.assign(this, {[field]: query[field]});
+                  }
+                } else {
+                  Object.assign(this, {[field]: this.parse(query[field])});
+                }
+              },
+            },
+          ]);
         }
       }
     }

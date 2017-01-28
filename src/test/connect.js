@@ -1,10 +1,12 @@
-/* global describe it */
+/* global describe it before */
 import 'babel-polyfill';
 import should from 'should';
 import {EventEmitter} from 'events';
 import {Db} from 'mongodb';
 import connect from '../lib/connect';
 import ObjectId from '../lib/types/ObjectId';
+
+const URL = process.env.MONGODB_URL || 'mongodb://localhost:27017/test';
 
 describe('Connect', () => {
   describe('Unit', () => {
@@ -19,7 +21,7 @@ describe('Connect', () => {
     let conn;
     before(async () => {
       conn = new EventEmitter();
-      await connect(process.env.MONGODB_URL)(conn);
+      await connect(URL)(conn);
     });
     it('should have a db link', () => {
       should(conn).have.property('db').which.is.an.instanceOf(Db);
@@ -28,9 +30,9 @@ describe('Connect', () => {
       should(conn.disconnectDriver).be.a.Function();
     });
     it('should have an id descriptor', () => {
-      should(conn.id).be.an.Object();
-      should(conn.id).have.property('name').which.eql('_id');
-      should(conn.id).have.property('type').which.eql(ObjectId);
+      should(conn._id).be.an.Object();
+      should(conn._id).have.property('name').which.eql('_id');
+      should(conn._id).have.property('type').which.eql(ObjectId);
     });
     describe('Operations', () => {
       it('should have operations', () => {

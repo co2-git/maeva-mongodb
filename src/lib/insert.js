@@ -1,4 +1,4 @@
-import {ObjectId} from 'mongodb';
+// @flow
 
 export default function insert(conn, inserter) {
   return new Promise(async (resolve, reject) => {

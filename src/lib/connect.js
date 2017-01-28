@@ -1,15 +1,15 @@
 import {MongoClient} from 'mongodb';
-import ObjectId from './types/ObjectId';
-import insert from './insert';
 import count from './count';
 import find from './find';
-import findOne from './findOne';
 import findById from './findById';
-import update from './update';
-import updateOne from './updateOne';
-import updateById from './updateById';
+import findOne from './findOne';
+import insert from './insert';
+import ObjectId from './types/ObjectId';
 import remove from './remove';
 import removeById from './removeById';
+import update from './update';
+import updateById from './updateById';
+import updateOne from './updateOne';
 
 const maevaConnectMongoDB = (url) => (conn) => new Promise(
   async (resolve, reject) => {

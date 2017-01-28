@@ -1,56 +1,66 @@
+/* global describe it before after */
 import should from 'should';
-import {EventEmitter} from 'events';
+import maeva, {Model} from 'maeva';
 import connect from '../lib/connect';
-import insert from '../lib/insert';
-import findOne from '../lib/findOne';
 
-const collection = `test-findOne-${Math.random()}-${Date.now()}`;
+class FindOneFoo extends Model {
+  static schema = {foo: Number};
+}
+
+const documents = [
+  {foo: 1},
+  {foo: 2},
+  {foo: 3},
+  {foo: 4},
+  {foo: 5},
+  {foo: 6},
+];
 
 describe('Find One', () => {
-  let conn;
   before(async () => {
-    conn = new EventEmitter();
-    await connect(process.env.MONGODB_URL)(conn);
-    await insert(conn, {
-     collection,
-     documents: [{foo: 1}, {foo: 2}],
-   });
+    await maeva.connect(connect(process.env.MONGODB_URL));
+    await FindOneFoo.insert(documents);
   });
-  describe('Unit', () => {
-    it('should be a function', () => {
-      should(findOne).be.a.Function();
+  describe('Find one without query', () => {
+    let results;
+    before(async () => {
+      results = await FindOneFoo.findOne();
+    });
+    it('should find one', () => {
+      should(results).be.an.Object();
+      should(results).have.property('foo').which.eql(1);
     });
   });
-  describe('Find one', () => {
-    describe('Empty query', () => {
-      let results;
-      before(async () => {
-        results = await findOne(conn, {
-          collection,
-          query: {}
-        });
-      });
-      it('should be an object', () => {
-        should(results).be.an.Object().and.not.be.an.Array();
-      });
-      it('should be the first document', () => {
-        should(results).have.property('foo').which.eql(1);
-      });
+  describe('Find one with query', () => {
+    let results;
+    before(async () => {
+      results = await FindOneFoo.findOne({foo: 2});
     });
-    describe('With query', () => {
-      let results;
-      before(async () => {
-        results = await findOne(conn, {
-          collection,
-          query: {foo: 2}
-        });
-      });
-      it('should be an object', () => {
-        should(results).be.an.Object().and.not.be.an.Array();
-      });
-      it('should be the matching document', () => {
-        should(results).have.property('foo').which.eql(2);
-      });
+    it('should find one', () => {
+      should(results).be.an.Object();
+      should(results).have.property('foo').which.eql(2);
     });
+  });
+  describe('Find one with meta-query', () => {
+    let results;
+    before(async () => {
+      results = await FindOneFoo.findOne({foo: {$gt: 4}});
+    });
+    it('should be the right number', () => {
+      should(results).be.an.Object();
+      should(results).have.property('foo').which.eql(5);
+    });
+  });
+  describe('Find one with no match', () => {
+    let results;
+    before(async () => {
+      results = await FindOneFoo.findOne({foo: 100});
+    });
+    it('should be the right number', () => {
+      should(results).be.undefined();
+    });
+  });
+  after(async () => {
+    await FindOneFoo.remove();
   });
 });

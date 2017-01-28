@@ -5,7 +5,7 @@ export default function findOne(conn, finder) {
     try {
       const collection = conn.db.collection(finder.collection);
       const results = await collection.findOne(
-        new FindStatement(finder.query),
+        new FindStatement(finder.get),
         finder.options,
       );
       resolve(results);

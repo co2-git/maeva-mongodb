@@ -1,6 +1,6 @@
 {
   "name": "maeva-mongodb",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "",
   "main": "dist/lib/connect.js",
   "scripts": {
@@ -17,14 +17,15 @@
     "babel-preset-stage-0": "^6.5.0",
     "chai": "^3.5.0",
     "eslint": "^3.7.1",
-    "flow-bin": "^0.33.0",
+    "flow-bin": "^0.36.0",
+    "maeva": "^3.1.1",
     "mocha": "^3.0.2",
     "mockery": "^1.7.0",
     "should": "^11.1.0"
   },
   "dependencies": {
     "lodash": "^4.15.0",
-    "maeva": "^2.4.0",
-    "mongodb": "^2.2.8"
+    "mongodb": "^2.2.8",
+    "underscore-switch": "^1.0.0"
   }
 }

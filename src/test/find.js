@@ -1,14 +1,12 @@
 /* global describe it before after */
-
 import should from 'should';
-import EventEmitter from 'events';
+import maeva, {Model} from 'maeva';
 import connect from '../lib/connect';
-import insert from '../lib/insert';
-import find from '../lib/find';
-import remove from '../lib/remove';
 
-// const collection = `test-find-${Math.random()}-${Date.now()}`;
-const collection = 'test-find';
+class FindFoo extends Model {
+  static schema = {foo: Number};
+}
+
 const documents = [
   {foo: 1},
   {foo: 2},
@@ -18,72 +16,48 @@ const documents = [
   {foo: 6},
 ];
 
-describe('Find operation', () => {
-  let conn;
+describe('Find', () => {
   before(async () => {
-    conn = new EventEmitter();
-    await connect(process.env.MONGODB_URL)(conn);
-    await insert(conn, {
-      collection,
-      documents,
+    await maeva.connect(connect(process.env.MONGODB_URL));
+    await FindFoo.insert(documents);
+  });
+  describe('Find without query', () => {
+    let results;
+    before(async () => {
+      results = await FindFoo.find();
+    });
+    it('should be the right number', () => {
+      should(results.length).eql(documents.length);
     });
   });
-  describe('Unit', () => {
-    it('should be a function', () => {
-      should(find).be.a.Function();
+  describe('Find with query', () => {
+    let results;
+    before(async () => {
+      results = await FindFoo.find({foo: 1});
+    });
+    it('should be the right number', () => {
+      should(results.length).eql(1);
     });
   });
-  describe('Find', () => {
-    describe('Empty query', () => {
-      let results;
-      before(async () => {
-        results = await find(conn, {
-          collection,
-          get: {},
-          options: {},
-        });
-      });
-      it(`should be an array of ${documents.length}`, () => {
-        should(results).be.an.Array().and.have.length(documents.length);
-      });
+  describe('Find with meta-query', () => {
+    let results;
+    before(async () => {
+      results = await FindFoo.find({foo: {$gt: 4}});
     });
-    describe('With query', () => {
-      let results;
-      before(async () => {
-        results = await find(conn, {
-          collection,
-          get: {foo: 1},
-          options: {},
-        });
-      });
-      it('should be an array of 1', () => {
-        should(results).be.an.Array().and.have.length(1);
-      });
+    it('should be the right number', () => {
+      should(results.length).eql(2);
     });
-    describe('Not', () => {
-      describe('Field is not value', () => {
-        let results;
-        before(async () => {
-          try {
-            const get = {foo: {$ne: 1}};
-            results = await find(conn, {
-              collection,
-              get,
-            });
-          } catch (error) {
-            console.log(error.stack);
-          }
-        });
-        it(`should be an array of ${documents.length - 1}`, () => {
-          should(results).be.an.Array().and.have.length(documents.length - 1);
-        });
-      });
+  });
+  describe('Find with no matche', () => {
+    let results;
+    before(async () => {
+      results = await FindFoo.find({foo: 100});
+    });
+    it('should be the right number', () => {
+      should(results.length).eql(0);
     });
   });
   after(async () => {
-    await remove(conn, {
-      collection,
-      get: {},
-    });
+    await FindFoo.remove();
   });
 });
