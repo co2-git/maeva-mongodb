@@ -1,45 +1,47 @@
+// @flow
 import {MongoClient} from 'mongodb';
-import count from './count';
-import find from './find';
-import findById from './findById';
-import findOne from './findOne';
-import insert from './insert';
-import ObjectId from './types/ObjectId';
-import remove from './remove';
-import removeById from './removeById';
-import update from './update';
-import updateById from './updateById';
-import updateOne from './updateOne';
+import EventEmitter from 'events';
+import URL from 'url';
 
-const maevaConnectMongoDB = (url) => (conn) => new Promise(
-  async (resolve, reject) => {
-    try {
-      conn.db = await MongoClient.connect(url);
-      conn.operations = {
-        insert: (inserter) => insert(conn, inserter),
-        count: (finder, options) => count(conn, finder, options),
-        find: (finder, options) => find(conn, finder, options),
-        findOne: (finder, options) => findOne(conn, finder, options),
-        findById: (finder, options) => findById(conn, finder, options),
-        update: (updater) => update(conn, updater),
-        updateOne: (updater) => updateOne(conn, updater),
-        updateById: (updater) => updateById(conn, updater),
-        remove: (remover) => remove(conn, remover),
-        removeById: (remover) => removeById(conn, remover),
-      };
-      conn.disconnectDriver = ::conn.db.close;
-      conn._id = {
-        name: '_id',
-        type: ObjectId,
-      };
-      conn.schema = {
-        _id: ObjectId,
-      };
-      resolve();
-    } catch (error) {
-      reject(error);
+import findOne from './findOne';
+import insertOne from './insertOne';
+
+const maevaConnectMongoDB = (url: ?string): MaevaConnector => {
+  if (url) {
+    const {protocol} = URL.parse(url);
+    if (protocol !== 'mongodb:') {
+      throw new Error(`Expected mongodb: protocol, got ${protocol} in ${url}`);
     }
   }
-);
+  let db;
+  const emitter = new EventEmitter();
+  const connect = async () => {
+    try {
+      db = await MongoClient.connect(url);
+      emitter.emit('connected');
+    } catch (error) {
+      emitter.emit('error', error);
+    }
+  };
+  const disconnect = async () => {
+    try {
+      await db.close();
+      emitter.emit('disconnected');
+    } catch (error) {
+      emitter.emit('error', error);
+    }
+  };
+  return {
+    actions: {
+      connect,
+      disconnect,
+      findOne: (query, model) => findOne(db, query, model),
+      insertOne: (candidate, model, options) =>
+        insertOne(db, candidate, model, options),
+    },
+    emitter,
+    name: 'mongodb',
+  };
+};
 
 export default maevaConnectMongoDB;

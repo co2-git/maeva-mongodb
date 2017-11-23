@@ -961,7 +961,7 @@ flat-cache@^1.2.1:
     graceful-fs "^4.1.2"
     write "^0.2.1"
 
-flow-bin, flow-bin@^0.36.0:
+flow-bin:
   version "0.36.0"
   resolved "https://registry.yarnpkg.com/flow-bin/-/flow-bin-0.36.0.tgz#557907bd9c2ab0670cfad9e7e906a74b0631e39a"
 
@@ -1235,11 +1235,10 @@ loose-envify@^1.0.0:
   dependencies:
     js-tokens "^2.0.0"
 
-maeva@^3.1.1:
-  version "3.1.1"
-  resolved "https://registry.yarnpkg.com/maeva/-/maeva-3.1.1.tgz#08cbc7ca5869ed476c5943c290a14717d39f5c1f"
+maeva@^4.0.1:
+  version "4.0.1"
+  resolved "https://registry.yarnpkg.com/maeva/-/maeva-4.0.1.tgz#d3e33c9fa6e082a884e931da21ec5cd84d7f14e1"
   dependencies:
-    flow-bin "^0.36.0"
     lodash "^4.15.0"
 
 minimatch@^3.0.2:

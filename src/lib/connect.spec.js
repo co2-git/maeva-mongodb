@@ -3,8 +3,7 @@ import 'babel-polyfill';
 import should from 'should';
 import {EventEmitter} from 'events';
 import {Db} from 'mongodb';
-import connect from '../lib/connect';
-import ObjectId from '../lib/types/ObjectId';
+import connect from './connect';
 
 const URL = process.env.MONGODB_URL || 'mongodb://localhost:27017/test';
 
