@@ -40,6 +40,9 @@ const maevaConnectMongoDB = (url: ?string): MaevaConnector => {
         insertOne(db, candidate, model, options),
     },
     emitter,
+    id: {
+      name: '_id',
+    },
     name: 'mongodb',
   };
 };

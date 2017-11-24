@@ -1235,9 +1235,9 @@ loose-envify@^1.0.0:
   dependencies:
     js-tokens "^2.0.0"
 
-maeva@^4.0.1:
-  version "4.0.1"
-  resolved "https://registry.yarnpkg.com/maeva/-/maeva-4.0.1.tgz#d3e33c9fa6e082a884e931da21ec5cd84d7f14e1"
+maeva@4.0.3:
+  version "4.0.3"
+  resolved "https://registry.yarnpkg.com/maeva/-/maeva-4.0.3.tgz#680c62149741eb66344fd73ca218ff097c61906c"
   dependencies:
     lodash "^4.15.0"
 

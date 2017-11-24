@@ -18,23 +18,23 @@ describe('Insert one', () => {
   describe('Insert', () => {
     describe('Insert one', () => {
       let result;
-      // before(async () => {
-      //   try {
-      //     result = await maeva.insertOne(foo, {foo: 0});
-      //     console.log({result});
-      //   } catch (error) {
-      //     throw error;
-      //   }
-      // });
-      it('should be an object', () => {
-        // should(result).be.an.Object();
+      before(async () => {
+        try {
+          result = await maeva.insertOne(foo, {foo: 0});
+          console.log({result});
+        } catch (error) {
+          throw error;
+        }
       });
-      // it('should have the expected fields', () => {
-      //   should(result).have.property('foo').which.eql(0);
-      // });
-      // it('should have an _id', () => {
-      //   should(result).have.property('foo').which.eql(0);
-      // });
+      it('should be an object', () => {
+        should(result).be.an.Object();
+      });
+      it('should have the expected fields', () => {
+        should(result).have.property('foo').which.eql(0);
+      });
+      it('should have an _id', () => {
+        should(result).have.property('_id');
+      });
     });
   });
 });
