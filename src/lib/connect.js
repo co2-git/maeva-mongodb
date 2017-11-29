@@ -1,5 +1,5 @@
 // @flow
-import {MongoClient} from 'mongodb';
+import {MongoClient, ObjectID} from 'mongodb';
 import EventEmitter from 'events';
 import URL from 'url';
 
@@ -44,6 +44,18 @@ const maevaConnectMongoDB = (url: ?string): MaevaConnector => {
     emitter,
     id: {
       name: '_id',
+      type: {
+        convert: (value) => {
+          try {
+            return new ObjectID(value);
+          } catch (error) {
+            return value;
+          }
+        },
+        validate: (value) => {
+          return value instanceof ObjectID;
+        }
+      }
     },
     name: 'mongodb',
   };

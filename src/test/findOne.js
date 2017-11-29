@@ -1,18 +1,26 @@
 /* global describe it before */
 import should from 'should';
-import * as maeva from 'maeva';
+import * as data from 'maeva';
 
-const model = maeva.model('findOne', {foo: Number});
+const model = data.model('findOne', {foo: Number});
+const linkedModel = data.model('linkedFindOne', {
+  name: String,
+  foo: data.link(model)
+});
 
 describe('Find one', () => {
   let result;
+  let linkedResult;
+  let linked;
   before(async () => {
     try {
-      await maeva.insertOne(model, {foo: 0});
-      await maeva.insertOne(model, {foo: 1});
-      await maeva.insertOne(model, {foo: 2});
-      result = await maeva.findOne(model, {foo: 1});
-      console.log({result});
+      await data.insertOne(model, {foo: 0});
+      await data.insertOne(model, {foo: 1});
+      linked = await data.insertOne(model, {foo: 2});
+      await data.insertOne(linkedModel, {name: 'hello', foo: linked});
+      result = await data.findOne(model, {foo: 1});
+      linkedResult = await data.findOne(linkedModel, {foo: linked});
+      console.log({result, linkedResult});
     } catch (error) {
       throw error;
     }
@@ -25,5 +33,8 @@ describe('Find one', () => {
   });
   it('should have an _id', () => {
     should(result).have.property('_id');
+  });
+  it('should found lin', () => {
+    should(linkedResult).have.property('foo').which.eql(linked._id);
   });
 });
