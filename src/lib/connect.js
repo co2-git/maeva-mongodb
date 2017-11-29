@@ -3,6 +3,7 @@ import {MongoClient} from 'mongodb';
 import EventEmitter from 'events';
 import URL from 'url';
 
+import findMany from './findMany';
 import findOne from './findOne';
 import insertOne from './insertOne';
 
@@ -35,6 +36,7 @@ const maevaConnectMongoDB = (url: ?string): MaevaConnector => {
     actions: {
       connect,
       disconnect,
+      findMany: (query, model) => findMany(db, query, model),
       findOne: (query, model) => findOne(db, query, model),
       insertOne: (candidate, model, options) =>
         insertOne(db, candidate, model, options),
