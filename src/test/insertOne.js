@@ -9,7 +9,6 @@ describe('Insert one', () => {
   before(async () => {
     try {
       result = await maeva.insertOne(model, {foo: 0});
-      console.log({result});
     } catch (error) {
       throw error;
     }

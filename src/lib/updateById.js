@@ -1,19 +1,21 @@
-export default function updateById(conn, updater) {
+import findById from './findById';
+
+export default function updateById(db, id, updater, model, options) {
   return new Promise(async (resolve, reject) => {
     try {
-      const collection = conn.db.collection(updater.collection);
+      const collection = db.collection(model.name);
       const result = await collection.updateOne(
-        {_id: updater.id},
-        {$set: updater.set},
-        updater.options,
+        {_id: id},
+        {$set: updater},
+        options,
       );
       if (!result.result.ok) {
         reject(new Error('Could not update'));
       } else {
-        resolve(result);
+        const found = await findById(db, id, model, options);
+        resolve(found);
       }
     } catch (error) {
-      console.log(error.stack);
       reject(error);
     }
   });

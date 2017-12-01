@@ -1,4 +1,3 @@
-// @flow
 import {MongoClient, ObjectID} from 'mongodb';
 import EventEmitter from 'events';
 import URL from 'url';
@@ -6,8 +5,9 @@ import URL from 'url';
 import findMany from './findMany';
 import findOne from './findOne';
 import insertOne from './insertOne';
+import updateById from './updateById';
 
-const maevaConnectMongoDB = (url: ?string): MaevaConnector => {
+const maevaConnectMongoDB = (url) => {
   if (url) {
     const {protocol} = URL.parse(url);
     if (protocol !== 'mongodb:') {
@@ -40,6 +40,8 @@ const maevaConnectMongoDB = (url: ?string): MaevaConnector => {
       findOne: (query, model) => findOne(db, query, model),
       insertOne: (candidate, model, options) =>
         insertOne(db, candidate, model, options),
+      updateById: (id, updater, model, options) =>
+        updateById(db, id, updater, model, options),
     },
     emitter,
     id: {

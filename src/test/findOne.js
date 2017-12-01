@@ -20,7 +20,6 @@ describe('Find one', () => {
       await data.insertOne(linkedModel, {name: 'hello', foo: linked});
       result = await data.findOne(model, {foo: 1});
       linkedResult = await data.findOne(linkedModel, {foo: linked});
-      console.log({result, linkedResult});
     } catch (error) {
       throw error;
     }

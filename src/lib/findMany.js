@@ -1,5 +1,3 @@
-// @flow
-
 const findMany = (db, query, model, options) =>
   new Promise(async (resolve, reject) => {
     try {
