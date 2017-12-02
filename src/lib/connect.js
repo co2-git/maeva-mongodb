@@ -6,6 +6,7 @@ import findMany from './findMany';
 import findOne from './findOne';
 import findById from './findById';
 import insertOne from './insertOne';
+import insertMany from './insertMany';
 import updateById from './updateById';
 
 const maevaConnectMongoDB = (url) => {
@@ -42,6 +43,8 @@ const maevaConnectMongoDB = (url) => {
       findById: (id, model) => findById(db, id, model),
       insertOne: (candidate, model, options) =>
         insertOne(db, candidate, model, options),
+      insertMany: (candidate, model, options) =>
+        insertMany(db, candidate, model, options),
       updateById: (id, updater, model, options) =>
         updateById(db, id, updater, model, options),
     },
