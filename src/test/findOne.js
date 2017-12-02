@@ -33,7 +33,7 @@ describe('Find one', () => {
   it('should have an _id', () => {
     should(result).have.property('_id');
   });
-  it('should found lin', () => {
+  it('should found link', () => {
     should(linkedResult).have.property('foo').which.eql(linked._id);
   });
 });
