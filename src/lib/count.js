@@ -1,10 +1,10 @@
-import FindStatement from './FindStatement';
+import findQuery from '../queries/find';
 
-export default function count(conn, finder) {
+export default function count(db, query, model, options = {}) {
   return new Promise(async (resolve, reject) => {
     try {
-      const collection = conn.db.collection(finder.collection);
-      const results = collection.count(new FindStatement(finder.get));
+      const collection = db.collection(model.name);
+      const results = collection.count(findQuery(query));
       resolve(results);
     } catch (error) {
       console.log(error.stack);
