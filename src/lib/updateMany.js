@@ -1,14 +1,22 @@
-import first from 'lodash/first';
+import findQuery from '../queries/find';
+import updateQuery from '../queries/update';
+import findMany from './findMany';
 
-const insertOne = (db, candidate, model) =>
+const updateMany = (db, query, updater, model, options = {}) =>
   new Promise(async (resolve, reject) => {
     try {
       const collection = db.collection(model.name);
-      const results = await collection.insertOne(candidate);
-      resolve(first(results.ops));
+      const results = await collection.updateMany(
+        findQuery(query),
+        updateQuery(updater),
+      );
+      if (!results.result.ok) {
+        throw new Error('Could not update many documents');
+      }
+      resolve(await findMany(db, query, model, options));
     } catch (error) {
       reject(error);
     }
   });
 
-export default insertOne;
+export default updateMany;

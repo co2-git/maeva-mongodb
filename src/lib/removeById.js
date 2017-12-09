@@ -1,25 +1,18 @@
-/**
- *  @module removeById
-**/
-
 import {ObjectID} from 'mongodb';
+import removeOne from './removeOne';
 
-export default function removeById(conn, remover) {
-  return new Promise(async (resolve, reject) => {
+const removeById = (db, id, model, options) =>
+  new Promise(async (resolve, reject) => {
     try {
-      const collection = conn.db.collection(remover.collection);
-      const result = await collection.remove(
-        {_id: new ObjectID(remover.id)},
-        remover.options,
-      );
-      if (!result.result.ok) {
-        reject(new Error('Could not remove'));
-      } else {
-        resolve(result);
-      }
+      const results = await removeOne(db,
+        [{field: '_id', operator: 'is', value: new ObjectID(id)}],
+         model,
+         options,
+       );
+      resolve(results);
     } catch (error) {
-      console.log(error.stack);
       reject(error);
     }
   });
-}
+
+export default removeById;

@@ -1,20 +1,22 @@
-export default function updateOne(conn, updater) {
-  return new Promise(async (resolve, reject) => {
+import findQuery from '../queries/find';
+import updateQuery from '../queries/update';
+import findOne from './findOne';
+
+const updateOne = (db, query, updater, model, options = {}) =>
+  new Promise(async (resolve, reject) => {
     try {
-      const collection = conn.db.collection(updater.collection);
-      const result = await collection.updateOne(
-        updater.get,
-        {$set: updater.set},
-        updater.options,
+      const collection = db.collection(model.name);
+      const results = await collection.updateOne(
+        findQuery(query),
+        updateQuery(updater),
       );
-      if (!result.result.ok) {
-        reject(new Error('Could not update'));
-      } else {
-        resolve(result);
+      if (!results.result.ok) {
+        throw new Error('Could not update many documents');
       }
+      resolve(await findOne(db, query, model, options));
     } catch (error) {
-      console.log(error.stack);
       reject(error);
     }
   });
-}
+
+export default updateOne;
