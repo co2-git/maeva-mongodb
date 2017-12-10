@@ -8,7 +8,8 @@ const findByIds = (db, ids, model, options) =>
         [{
           field: '_id',
           operator: 'in',
-          value: ids.map(id => new ObjectID(id))
+          value: ids.map(id => new ObjectID(id)),
+          type: {array: 'link'}
         }],
          model,
          options,

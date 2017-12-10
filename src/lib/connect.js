@@ -18,17 +18,6 @@ import updateByIds from './updateByIds';
 import updateMany from './updateMany';
 import updateOne from './updateOne';
 
-const convert = (value) => {
-  try {
-    if (value && typeof value === 'object' && value._id) {
-      return new ObjectID(value._id);
-    }
-    return new ObjectID(value);
-  } catch (error) {
-    return value;
-  }
-};
-
 const maevaConnectMongoDB = (url) => {
   if (url) {
     const {protocol} = URL.parse(url);
@@ -83,23 +72,7 @@ const maevaConnectMongoDB = (url) => {
         updateOne(db, query, updater, model, options),
     },
     emitter,
-    id: {
-      name: '_id',
-      type: {
-        name: 'mongodbObjectID',
-        convert,
-        validate: (value) => {
-          if (!value instanceof ObjectID) {
-            throw new Error('id must be an object id');
-          }
-        },
-      },
-      isEqual: (idA, idB) => {
-        const _idA = convert(idA);
-        const _idB = convert(idB);
-        return _idA.equals(_idB);
-      },
-    },
+    idName: '_id',
   };
 };
 

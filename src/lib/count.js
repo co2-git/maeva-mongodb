@@ -1,6 +1,6 @@
 import findQuery from '../queries/find';
 
-export default function count(db, query, model, options = {}) {
+export default function count(db, query, model) {
   return new Promise(async (resolve, reject) => {
     try {
       const collection = db.collection(model.name);

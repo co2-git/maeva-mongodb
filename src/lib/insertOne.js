@@ -1,10 +1,11 @@
 import first from 'lodash/first';
+import insertQuery from '../queries/insert';
 
-const insertOne = (db, candidate, model) =>
+const insertOne = (db, document, model) =>
   new Promise(async (resolve, reject) => {
     try {
       const collection = db.collection(model.name);
-      const results = await collection.insertOne(candidate);
+      const results = await collection.insertOne(insertQuery(document));
       resolve(first(results.ops));
     } catch (error) {
       reject(error);

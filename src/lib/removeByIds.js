@@ -1,4 +1,3 @@
-import {ObjectID} from 'mongodb';
 import removeMany from './removeMany';
 
 const removeByIds = (db, ids, model, options) =>
@@ -8,7 +7,8 @@ const removeByIds = (db, ids, model, options) =>
         [{
           field: '_id',
           operator: 'in',
-          value: ids.map(id => new ObjectID(id))
+          value: ids,
+          type: {array: 'link'}
         }],
          model,
          options,
