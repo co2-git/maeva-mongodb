@@ -23,8 +23,12 @@ const mapQueries = queries => queries.map(query => {
   const convertedValue = convertValue(query.value, query.type);
   switch (query.operator) {
   default: throw new Error(`Unkown operator ${query.operator}`);
-  case 'above': return {[query.field]: {$gt: convertedValue}};
-  case 'below': return {[query.field]: {$lt: convertedValue}};
+  case 'above':
+  case 'after':
+    return {[query.field]: {$gt: convertedValue}};
+  case 'before':
+  case 'below':
+    return {[query.field]: {$lt: convertedValue}};
   case 'in': return {[query.field]: {$in: convertedValue}};
   case 'is': return {[query.field]: convertedValue};
   case 'match': return {[query.field]: parseRegExp(convertedValue)};
