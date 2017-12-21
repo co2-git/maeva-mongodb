@@ -1,4 +1,4 @@
-import {MongoClient, ObjectID} from 'mongodb';
+import {MongoClient} from 'mongodb';
 import EventEmitter from 'events';
 import URL from 'url';
 
@@ -18,7 +18,7 @@ import updateByIds from './updateByIds';
 import updateMany from './updateMany';
 import updateOne from './updateOne';
 
-const maevaConnectMongoDB = (url) => {
+const maevaConnectMongoDB = (url, connectorOptions = {}) => {
   if (url) {
     const {protocol} = URL.parse(url);
     if (protocol !== 'mongodb:') {
@@ -27,14 +27,17 @@ const maevaConnectMongoDB = (url) => {
   }
   let db;
   const emitter = new EventEmitter();
-  const connect = async () => {
-    try {
-      db = await MongoClient.connect(url);
-      emitter.emit('connected');
-    } catch (error) {
+  const connect = () => MongoClient.connect(url, (error, link) => {
+    if (error) {
       emitter.emit('error', error);
+    } else {
+      db = link;
+      db.on('close', () => {
+        emitter.emit('disconnected');
+      });
+      emitter.emit('connected');
     }
-  };
+  });
   const disconnect = async () => {
     try {
       await db.close();
@@ -73,6 +76,9 @@ const maevaConnectMongoDB = (url) => {
     },
     emitter,
     idName: '_id',
+    options: {
+      keepAlive: connectorOptions.keepAlive,
+    },
   };
 };
 
