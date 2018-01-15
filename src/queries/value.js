@@ -17,6 +17,7 @@ const convertValue = (value, type) => {
     case 'string':
     case 'boolean':
     case 'number':
+    case 'any':
       return value;
     case 'date':
       return new Date(value);
