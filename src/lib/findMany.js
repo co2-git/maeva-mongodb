@@ -14,6 +14,9 @@ const findMany = (db, query = {}, model, options = {}) =>
           operation.limit(options.range);
         }
       }
+      if (options.sort) {
+        operation.sort(options.sort);
+      }
       const results = await operation.toArray();
       resolve(results);
     } catch (error) {
