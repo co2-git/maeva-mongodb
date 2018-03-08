@@ -6,6 +6,7 @@ export default function updateById(db, id, updater, model, options) {
   return new Promise(async (resolve, reject) => {
     try {
       const collection = db.collection(model.name);
+      const proto = {...updater};
       const query = updateQuery(updater);
       const result = await collection.updateOne(
         {_id: new ObjectID(id)},
